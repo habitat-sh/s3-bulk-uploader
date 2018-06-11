@@ -1,0 +1,3 @@
+[s3-bulk-uploader]
+plan_path = "."
+paths = ["./*"]
