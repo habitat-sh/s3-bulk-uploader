@@ -91,13 +91,14 @@ func (worker *Worker) upload(file string) (string, error) {
 	// s3 destination file path
 	var platform string
 
-    platform = GetStringBetween(file, "x86_64", ".hart")
+    platform = GetStringBetween(file, "-x86_64-", ".hart")
 	if platform == "windows" {
 		platform = "windows"
 	} else if platform == "linux" {
 		platform = "linux"
     } else {
-        return "Couldn't determine a supported platform, must be 'windows' or 'linux'", err
+        fmt.Println("Couldn't determine a supported platform, must be 'windows' or 'linux'")
+        panic(err)
     }
 
 	filename := strings.Split(file, "/")
@@ -144,6 +145,7 @@ func GetStringBetween(str string, start string, end string) (result string) {
     }
     s += len(start)
     e := strings.Index(str, end)
+    fmt.Println("PLATFORM STRING FOR PACKAGE IS:" + str[s:e])
     return str[s:e]
 }
 
