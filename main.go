@@ -49,6 +49,9 @@ func get_file_list(searchDir string, file_channel chan string, num_workers int, 
 	_ = filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
 
 		// check if it's a file/directory (we just want files)
+        if !strings.HasSuffix(path, ".hart"){
+            return nil
+        }
 		file, err := os.Open(path)
 		if err != nil {
 			return nil
@@ -89,15 +92,18 @@ func (worker *Worker) upload(file string) (string, error) {
 	}
 
 	// s3 destination file path
+	var plat string
 	var platform string
+    var arch string = "-x86_64-"
+    var suffix string = ".hart"
 
-    platform = GetStringBetween(file, "-x86_64-", ".hart")
-	if platform == "windows" {
+    plat = GetStringBetween(file, arch, suffix)
+	if plat == "windows" {
 		platform = "windows"
-	} else if platform == "linux" {
+	} else if plat == "linux" {
 		platform = "linux"
     } else {
-        fmt.Println("Couldn't determine a supported platform, must be 'windows' or 'linux'")
+        platform = plat
         panic(err)
     }
 
@@ -145,7 +151,6 @@ func GetStringBetween(str string, start string, end string) (result string) {
     }
     s += len(start)
     e := strings.Index(str, end)
-    fmt.Println("PLATFORM STRING FOR PACKAGE IS:" + str[s:e])
     return str[s:e]
 }
 
